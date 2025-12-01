@@ -101,6 +101,7 @@
     <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
+                <!-- Logo Area -->
                 <div class="flex items-center gap-2">
                     <div class="bg-indigo-600 p-1.5 rounded-lg text-white">
                         <i data-lucide="qr-code" class="w-6 h-6"></i>
@@ -108,21 +109,23 @@
                     <span class="font-bold text-xl tracking-tight text-slate-900">EasyBook</span>
                 </div>
                 
-                <div class="flex items-center gap-4">
+                <!-- Right Side Actions -->
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <!-- Desktop Links -->
                     <div class="hidden md:flex items-center space-x-6">
                         <a href="#comparison" class="text-sm font-medium text-slate-600 hover:text-indigo-600" data-i18n="nav_benefits">Shopkeeper Benefits</a>
                         <a href="#process" class="text-sm font-medium text-slate-600 hover:text-indigo-600" data-i18n="nav_how">How it Works</a>
                         <a href="#testimonials" class="text-sm font-medium text-slate-600 hover:text-indigo-600" data-i18n="nav_reviews">Reviews</a>
                     </div>
                     
-                    <!-- Language Selector -->
+                    <!-- Language Selector (Visible on Mobile & Desktop) -->
                     <div class="relative group">
-                        <button class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-200 transition-colors">
+                        <button class="flex items-center gap-2 px-2 sm:px-3 py-1.5 bg-slate-100 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-200 transition-colors">
                             <i data-lucide="globe" class="w-4 h-4"></i>
                             <span id="current-lang">EN</span>
                             <i data-lucide="chevron-down" class="w-3 h-3"></i>
                         </button>
-                        <div class="absolute right-0 top-full mt-2 w-32 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden hidden group-hover:block p-1">
+                        <div class="absolute right-0 top-full mt-2 w-32 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden hidden group-hover:block p-1 z-50">
                             <button onclick="changeLanguage('en')" class="w-full text-left px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2">
                                 🇺🇸 English
                             </button>
@@ -132,10 +135,28 @@
                         </div>
                     </div>
 
+                    <!-- Desktop CTA -->
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPpfjyKuxChWiCxLscIn3D1v4ph9QuwRegFG_k0oqvdcu6Pg/viewform?usp=preview" target="_blank" class="hidden md:flex px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-full transition-all shadow-md hover:shadow-lg items-center gap-2" data-i18n="nav_cta">
                         Get Free QR
                     </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-slate-100 absolute w-full left-0 top-16 shadow-lg z-40">
+            <div class="px-4 pt-4 pb-6 space-y-3 flex flex-col">
+                <a href="#comparison" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50" data-i18n="nav_benefits">Shopkeeper Benefits</a>
+                <a href="#process" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50" data-i18n="nav_how">How it Works</a>
+                <a href="#testimonials" class="block px-3 py-2 rounded-lg text-base font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50" data-i18n="nav_reviews">Reviews</a>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPpfjyKuxChWiCxLscIn3D1v4ph9QuwRegFG_k0oqvdcu6Pg/viewform?usp=preview" target="_blank" class="block w-full text-center px-5 py-3 mt-4 bg-indigo-600 hover:bg-indigo-700 text-white text-base font-bold rounded-xl transition-all shadow-md" data-i18n="nav_cta">
+                    Get Free QR
+                </a>
             </div>
         </div>
     </nav>
@@ -153,16 +174,16 @@
                 <i data-lucide="check-circle" class="w-3 h-3 text-green-500"></i>
                 <span data-i18n="hero_badge">Free for all Shopkeepers</span>
             </div>
-            <h1 class="text-4xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6" data-i18n="hero_title">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6" data-i18n="hero_title">
                 Stop the Crowd. <br>
                 <span class="text-indigo-600">Start the Flow.</span>
             </h1>
-            <p class="text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed" data-i18n="hero_subtitle">
+            <p class="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed" data-i18n="hero_subtitle">
                 Transform your Google Maps listing into a booking machine. <br>
                 Upload one QR code. Customers book online. <strong>Zero technical skills needed.</strong>
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPpfjyKuxChWiCxLscIn3D1v4ph9QuwRegFG_k0oqvdcu6Pg/viewform?usp=preview" target="_blank" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center gap-2 transform hover:-translate-y-1">
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdPpfjyKuxChWiCxLscIn3D1v4ph9QuwRegFG_k0oqvdcu6Pg/viewform?usp=preview" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-lg rounded-xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-2 transform hover:-translate-y-1">
                     <span data-i18n="hero_btn">Get My Shop QR Code</span>
                     <i data-lucide="arrow-right" class="w-5 h-5"></i>
                 </a>
@@ -171,21 +192,21 @@
     </section>
 
     <!-- SECTION 1: Shopkeeper Problem (Chaos vs Order) -->
-    <section id="comparison" class="py-24 bg-slate-50 border-y border-slate-200">
+    <section id="comparison" class="py-20 lg:py-24 bg-slate-50 border-y border-slate-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 reveal">
-                <h2 class="text-3xl font-bold text-slate-900" data-i18n="comp_title">Manage your Shop, Not the Crowd</h2>
+            <div class="text-center mb-12 lg:mb-16 reveal">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-900" data-i18n="comp_title">Manage your Shop, Not the Crowd</h2>
                 <p class="text-slate-500 mt-2" data-i18n="comp_subtitle">See the difference between a normal shop and an EasyBook shop.</p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 
                 <!-- CHAOS (Visual) -->
-                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200 relative overflow-hidden group reveal hover:shadow-md transition-shadow">
+                <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 relative overflow-hidden group reveal hover:shadow-md transition-shadow">
                     <div class="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
                     <div class="flex justify-between items-start mb-6">
                         <div>
-                            <h3 class="text-xl font-bold text-slate-900" data-i18n="prob_title">Traditional Shop</h3>
+                            <h3 class="text-lg md:text-xl font-bold text-slate-900" data-i18n="prob_title">Traditional Shop</h3>
                             <p class="text-xs text-red-500 font-bold uppercase tracking-wide mt-1" data-i18n="prob_badge">Problem</p>
                         </div>
                         <div class="bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold border border-red-100" data-i18n="prob_tag">
@@ -194,8 +215,8 @@
                     </div>
                     
                     <!-- Graphic -->
-                    <div class="bg-slate-100 rounded-xl h-56 relative flex items-center justify-center mb-6 overflow-hidden border border-slate-200">
-                        <i data-lucide="store" class="w-20 h-20 text-slate-300"></i>
+                    <div class="bg-slate-100 rounded-xl h-48 md:h-56 relative flex items-center justify-center mb-6 overflow-hidden border border-slate-200">
+                        <i data-lucide="store" class="w-16 md:w-20 h-16 md:h-20 text-slate-300"></i>
                         
                         <!-- Animated Red Dots (Crowd) -->
                         <div class="absolute inset-0 animate-chaos">
@@ -208,7 +229,7 @@
                             <div class="absolute top-[50%] left-[55%] w-4 h-4 bg-red-500 rounded-full border-2 border-white shadow-sm"></div>
                             
                             <!-- Walk away animation -->
-                            <div class="absolute top-8 right-8 flex items-center gap-2 animate-walk-away">
+                            <div class="absolute top-8 right-4 md:right-8 flex items-center gap-2 animate-walk-away">
                                 <span class="text-[10px] font-bold text-red-500 bg-white px-2 py-1 rounded shadow-sm border border-red-100" data-i18n="prob_bubble">Waiting too long!</span>
                                 <div class="w-3 h-3 bg-red-400 rounded-full"></div>
                             </div>
@@ -233,11 +254,11 @@
                 </div>
 
                 <!-- ORDER (Visual) -->
-                <div class="bg-white rounded-2xl p-8 shadow-xl border-2 border-indigo-500 relative overflow-hidden group scale-105 reveal delay-100 z-10">
+                <div class="bg-white rounded-2xl p-6 md:p-8 shadow-xl border-2 border-indigo-500 relative overflow-hidden group scale-100 md:scale-105 reveal delay-100 z-10">
                     <div class="absolute top-0 left-0 w-full h-1 bg-indigo-600"></div>
                     <div class="flex justify-between items-start mb-6">
                         <div>
-                            <h3 class="text-xl font-bold text-slate-900" data-i18n="sol_title">EasyBook Shop</h3>
+                            <h3 class="text-lg md:text-xl font-bold text-slate-900" data-i18n="sol_title">EasyBook Shop</h3>
                             <p class="text-xs text-indigo-600 font-bold uppercase tracking-wide mt-1" data-i18n="sol_badge">Solution</p>
                         </div>
                         <div class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold border border-indigo-100 flex items-center gap-1">
@@ -246,8 +267,8 @@
                     </div>
                     
                     <!-- Graphic -->
-                    <div class="bg-indigo-50 rounded-xl h-56 relative flex items-center justify-center mb-6 overflow-hidden border border-indigo-100">
-                        <i data-lucide="store" class="w-20 h-20 text-indigo-300 z-10"></i>
+                    <div class="bg-indigo-50 rounded-xl h-48 md:h-56 relative flex items-center justify-center mb-6 overflow-hidden border border-indigo-100">
+                        <i data-lucide="store" class="w-16 md:w-20 h-16 md:h-20 text-indigo-300 z-10"></i>
                         
                         <!-- Smooth Dots Flowing -->
                         <div class="absolute inset-0 flex items-center justify-center">
@@ -295,7 +316,7 @@
     </section>
 
     <!-- SECTION 2: The Process (Visualizing Google Maps Integration) -->
-    <section id="process" class="py-24 relative overflow-hidden">
+    <section id="process" class="py-20 lg:py-24 relative overflow-hidden">
         <!-- BACKGROUND MAP IMAGE -->
         <div class="absolute inset-0 z-0 opacity-20" style="background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074&auto=format&fit=crop'); background-size: cover; background-position: center; filter: grayscale(100%);"></div>
         <!-- Gradient Overlay to ensure readability -->
@@ -336,7 +357,7 @@
                         </div>
 
                         <!-- Step 3 -->
-                        <div class="relative flex gap-4 bg-indigo-600/90 backdrop-blur-md p-4 rounded-xl border border-indigo-500 shadow-lg hover:shadow-xl transition-shadow text-white transform translate-x-2">
+                        <div class="relative flex gap-4 bg-indigo-600/90 backdrop-blur-md p-4 rounded-xl border border-indigo-500 shadow-lg hover:shadow-xl transition-shadow text-white md:transform md:translate-x-2">
                             <div class="w-12 h-12 rounded-full bg-white text-indigo-700 flex items-center justify-center font-bold border-4 border-indigo-400 shadow z-10 shrink-0">3</div>
                             <div>
                                 <h4 class="font-bold text-white" data-i18n="step3_title">Upload to Maps (Crucial)</h4>
@@ -353,12 +374,12 @@
                 </div>
 
                 <!-- GRAPHIC: Google Maps Mockup -->
-                <div class="relative reveal delay-100 perspective-1000">
+                <div class="relative reveal delay-100 perspective-1000 mt-12 md:mt-0">
                     <!-- Glow behind phone -->
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-white rounded-full filter blur-3xl opacity-60"></div>
                     
                     <!-- The Phone/Map UI -->
-                    <div class="relative bg-white rounded-[2rem] shadow-2xl border-4 border-slate-900 overflow-hidden max-w-sm mx-auto transform rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
+                    <div class="relative bg-white rounded-[2rem] shadow-2xl border-4 border-slate-900 overflow-hidden max-w-sm mx-auto transform md:rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
                         <!-- Fake Google Maps Header -->
                         <div class="bg-slate-50 p-4 border-b border-slate-100 flex items-center gap-3">
                             <div class="bg-red-500 text-white p-2 rounded-full shadow-sm animate-pin">
@@ -419,7 +440,7 @@
     </section>
 
     <!-- SECTION 3: Customer Chill Mode (Benefits for Customer) -->
-    <section id="chill" class="py-24 bg-sky-50 border-y border-sky-100">
+    <section id="chill" class="py-20 lg:py-24 bg-sky-50 border-y border-sky-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-2 gap-16 items-center">
                 
@@ -458,7 +479,7 @@
                         </div>
 
                         <!-- Info Bubbles -->
-                        <div class="absolute top-0 right-10 bg-white p-3 rounded-xl shadow-lg border border-sky-100 flex items-center gap-2 animate-bounce" style="animation-duration: 3s;">
+                        <div class="absolute top-0 right-4 md:right-10 bg-white p-3 rounded-xl shadow-lg border border-sky-100 flex items-center gap-2 animate-bounce" style="animation-duration: 3s;">
                             <i data-lucide="clock" class="text-indigo-500 w-4 h-4"></i>
                             <span class="text-xs font-bold text-slate-600" data-i18n="chill_bubble">Wait time: 0 mins</span>
                         </div>
@@ -499,9 +520,9 @@
     </section>
 
     <!-- SECTION 4: Testimonials (Social Proof) -->
-    <section id="testimonials" class="py-24 bg-white border-t border-slate-100">
+    <section id="testimonials" class="py-20 lg:py-24 bg-white border-t border-slate-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 reveal">
+            <div class="text-center mb-12 lg:mb-16 reveal">
                 <h2 class="text-3xl font-bold text-slate-900" data-i18n="test_title">Used by Smart Shopkeepers</h2>
                 <p class="text-slate-500 mt-2" data-i18n="test_subtitle">See what others say about EasyBook.</p>
             </div>
@@ -568,9 +589,9 @@
     </section>
 
     <!-- SECTION 5: FAQ (Information) -->
-    <section class="py-24 bg-indigo-50 border-y border-indigo-100">
+    <section class="py-20 lg:py-24 bg-indigo-50 border-y border-indigo-100">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 reveal">
+            <div class="text-center mb-12 lg:mb-16 reveal">
                 <h2 class="text-3xl font-bold text-slate-900" data-i18n="faq_title">Common Questions</h2>
                 <p class="text-slate-500 mt-2" data-i18n="faq_subtitle">Everything you need to know before registering.</p>
             </div>
@@ -632,6 +653,17 @@
 
     <script>
         lucide.createIcons();
+
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenu.classList.contains('hidden') ? 'menu' : 'x';
+            mobileMenuBtn.innerHTML = `<i data-lucide="${icon}" class="w-6 h-6"></i>`;
+            lucide.createIcons();
+        });
 
         // Reveal Animation Observer
         const observer = new IntersectionObserver((entries) => {
