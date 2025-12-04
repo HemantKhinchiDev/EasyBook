@@ -27,7 +27,11 @@ const shopFormSchema = z.object({
     ownerName: z.string().min(2, "Owner name is required"),
     phone: z.string().regex(/^\d{10}$/, "Invalid phone number (10 digits)"),
     email: z.string().email("Invalid email address"),
+    address: z.string().min(5, "Address is required"),
+    mapLink: z.string().url("Invalid Google Map URL").optional().or(z.literal("")),
+    telegram: z.string().min(2, "Telegram username is required"),
     minCharge: z.number().min(0, "Minimum charge cannot be negative"),
+    upiId: z.string().optional(),
     breakDuration: z.number().min(0, "Break duration cannot be negative").default(0),
     timeSlots: z.array(timeSlotSchema)
         .min(1, "At least one time slot is required")
@@ -49,6 +53,9 @@ export default function ShopRegistrationForm() {
             minCharge: 0,
             breakDuration: 0,
             timeSlots: [{ start: "09:00", end: "17:00" }],
+            mapLink: "",
+            telegram: "",
+            upiId: "",
         },
     });
 
@@ -106,7 +113,9 @@ export default function ShopRegistrationForm() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700">Shop Name</label>
+                                <label className="text-sm font-medium text-slate-700">
+                                    Shop Name <span className="text-red-500">*</span>
+                                </label>
                                 <input
                                     {...register("shopName")}
                                     className={cn(
@@ -119,7 +128,9 @@ export default function ShopRegistrationForm() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700">Owner Name</label>
+                                <label className="text-sm font-medium text-slate-700">
+                                    Owner Name <span className="text-red-500">*</span>
+                                </label>
                                 <input
                                     {...register("ownerName")}
                                     className={cn(
@@ -134,7 +145,9 @@ export default function ShopRegistrationForm() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700">Phone Number</label>
+                                <label className="text-sm font-medium text-slate-700">
+                                    Phone Number <span className="text-red-500">*</span>
+                                </label>
                                 <input
                                     {...register("phone")}
                                     type="tel"
@@ -148,7 +161,9 @@ export default function ShopRegistrationForm() {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700">Email Address</label>
+                                <label className="text-sm font-medium text-slate-700">
+                                    Email Address <span className="text-red-500">*</span>
+                                </label>
                                 <input
                                     {...register("email")}
                                     type="email"
@@ -161,6 +176,52 @@ export default function ShopRegistrationForm() {
                                 {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
                             </div>
                         </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-slate-700">
+                                Address <span className="text-red-500">*</span>
+                            </label>
+                            <textarea
+                                {...register("address")}
+                                rows={3}
+                                className={cn(
+                                    "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all resize-none",
+                                    errors.address ? "border-red-500 bg-red-50" : "border-slate-300"
+                                )}
+                                placeholder="Full shop address..."
+                            />
+                            {errors.address && <p className="text-xs text-red-500">{errors.address.message}</p>}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-slate-700">Google Map Link</label>
+                                <input
+                                    {...register("mapLink")}
+                                    className={cn(
+                                        "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all",
+                                        errors.mapLink ? "border-red-500 bg-red-50" : "border-slate-300"
+                                    )}
+                                    placeholder="https://maps.google.com/..."
+                                />
+                                {errors.mapLink && <p className="text-xs text-red-500">{errors.mapLink.message}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-slate-700">
+                                    Telegram Username <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    {...register("telegram")}
+                                    className={cn(
+                                        "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all",
+                                        errors.telegram ? "border-red-500 bg-red-50" : "border-slate-300"
+                                    )}
+                                    placeholder="@username"
+                                />
+                                {errors.telegram && <p className="text-xs text-red-500">{errors.telegram.message}</p>}
+                            </div>
+                        </div>
                     </div>
 
                     {/* Section 2: Service Details */}
@@ -171,7 +232,7 @@ export default function ShopRegistrationForm() {
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
                                     <DollarSign className="w-4 h-4 text-slate-400" />
-                                    Min. Service Charge (₹)
+                                    Min. Service Charge (₹) <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     {...register("minCharge", { valueAsNumber: true })}
@@ -183,6 +244,19 @@ export default function ShopRegistrationForm() {
                                     placeholder="0"
                                 />
                                 {errors.minCharge && <p className="text-xs text-red-500">{errors.minCharge.message}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-slate-700">UPI ID</label>
+                                <input
+                                    {...register("upiId")}
+                                    className={cn(
+                                        "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all",
+                                        errors.upiId ? "border-red-500 bg-red-50" : "border-slate-300"
+                                    )}
+                                    placeholder="user@upi"
+                                />
+                                {errors.upiId && <p className="text-xs text-red-500">{errors.upiId.message}</p>}
                             </div>
                         </div>
                     </div>
