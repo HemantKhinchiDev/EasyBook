@@ -57,16 +57,31 @@ export default function ShopRegistrationForm() {
         name: "timeSlots",
     });
 
+    // TODO: Replace with your actual Google Apps Script Web App URL after deployment
+    const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+
     const onSubmit = async (data: ShopFormValues) => {
         console.log("Submitting:", data);
-        // TODO: Integrate with Google Apps Script
         try {
-            // Simulation
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            alert("Form submitted successfully! (Check console for data)");
+            // Use text/plain to avoid CORS preflight issues with simple requests
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log("Success:", result);
+                alert("Form submitted successfully! Data saved to Google Sheet.");
+            } else {
+                throw new Error("Network response was not ok");
+            }
         } catch (error) {
-            console.error(error);
-            alert("Error submitting form");
+            console.error("Error submitting form:", error);
+            alert("Error submitting form. Please check the console and ensure the Script URL is correct.");
         }
     };
 
@@ -169,24 +184,6 @@ export default function ShopRegistrationForm() {
                                 />
                                 {errors.minCharge && <p className="text-xs text-red-500">{errors.minCharge.message}</p>}
                             </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
-                                    <Coffee className="w-4 h-4 text-slate-400" />
-                                    Break Duration (Minutes)
-                                </label>
-                                <input
-                                    {...register("breakDuration", { valueAsNumber: true })}
-                                    type="number"
-                                    className={cn(
-                                        "w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all",
-                                        errors.breakDuration ? "border-red-500 bg-red-50" : "border-slate-300"
-                                    )}
-                                    placeholder="e.g. 15"
-                                />
-                                <p className="text-[10px] text-slate-500">Gap between bookings.</p>
-                                {errors.breakDuration && <p className="text-xs text-red-500">{errors.breakDuration.message}</p>}
-                            </div>
                         </div>
                     </div>
 
@@ -197,14 +194,31 @@ export default function ShopRegistrationForm() {
                                 <Clock className="w-5 h-5 text-indigo-600" />
                                 Available Time Slots
                             </h2>
-                            <button
-                                type="button"
-                                onClick={() => append({ start: "09:00", end: "17:00" })}
-                                disabled={fields.length >= 4}
-                                className="text-sm text-indigo-600 font-bold hover:text-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-                            >
-                                <Plus className="w-4 h-4" /> Add Slot
-                            </button>
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                    <label className="text-sm font-medium text-slate-700 flex items-center gap-1">
+                                        <Coffee className="w-4 h-4 text-slate-400" />
+                                        Break (mins):
+                                    </label>
+                                    <input
+                                        {...register("breakDuration", { valueAsNumber: true })}
+                                        type="number"
+                                        className={cn(
+                                            "w-20 px-2 py-1 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all",
+                                            errors.breakDuration ? "border-red-500 bg-red-50" : "border-slate-300"
+                                        )}
+                                        placeholder="15"
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => append({ start: "09:00", end: "17:00" })}
+                                    disabled={fields.length >= 4}
+                                    className="text-sm text-indigo-600 font-bold hover:text-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                                >
+                                    <Plus className="w-4 h-4" /> Add Slot
+                                </button>
+                            </div>
                         </div>
 
                         <div className="space-y-3">
