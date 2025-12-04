@@ -5,7 +5,7 @@ const CONFIG = {
     FREE_BOOKINGS_PER_MONTH: 4,                 // Default; Settings sheet can override
     APPOINTMENT_DURATION_MINUTES: 60,           // Default; Settings sheet can override
 
-    // Google Sheets IDs: open each spreadsheet and copy the long ID from its URL
+    // Google Sheets IDs: open each spreadsheet and copy the long id from its URL
     SHEETS: {
         // Note: Only the unique ID string is used here.
         SHOPKEEPERS_ID: '1aZ26GJtxYCCSrNkHlAXfPEN5E4IwBHqK6C9MioA121s',
