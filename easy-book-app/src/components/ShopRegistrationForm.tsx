@@ -42,7 +42,7 @@ type ShopFormValues = z.infer<typeof shopFormSchema>;
 
 // --- Components ---
 export default function ShopRegistrationForm() {
-    const [isSuccess, setIsSuccess] = React.useState(false);
+    const [successData, setSuccessData] = React.useState<{ qrLink: string; bookingLink: string } | null>(null);
 
     const {
         register,
@@ -84,7 +84,10 @@ export default function ShopRegistrationForm() {
             if (response.ok) {
                 const result = await response.json();
                 console.log("Success:", result);
-                setIsSuccess(true);
+                setSuccessData({
+                    qrLink: result.qrLink,
+                    bookingLink: result.bookingLink
+                });
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 throw new Error("Network response was not ok");
@@ -95,7 +98,7 @@ export default function ShopRegistrationForm() {
         }
     };
 
-    if (isSuccess) {
+    if (successData) {
         return (
             <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
                 <div className="max-w-xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 p-8 text-center space-y-6">
@@ -104,6 +107,13 @@ export default function ShopRegistrationForm() {
                     </div>
 
                     <h1 className="text-3xl font-bold text-slate-900">Registration Successful!</h1>
+
+                    {successData.qrLink && (
+                        <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <img src={successData.qrLink} alt="Shop QR Code" className="w-48 h-48 mb-2" />
+                            <p className="text-sm text-slate-500 font-medium">Scan to Book Appointment</p>
+                        </div>
+                    )}
 
                     <div className="space-y-4 text-left bg-slate-50 p-6 rounded-xl border border-slate-200">
                         <h3 className="font-semibold text-lg text-slate-800">Next Steps:</h3>
@@ -118,6 +128,14 @@ export default function ShopRegistrationForm() {
                                 <span className="font-medium text-slate-900">Upload to Google Maps:</span> Go to your shop's Google Maps listing and upload this QR code as a photo so customers can scan it to book appointments.
                             </li>
                         </ol>
+                        {successData.bookingLink && (
+                            <div className="mt-4 pt-4 border-t border-slate-200">
+                                <p className="text-sm text-slate-500 mb-1">Your Booking Link:</p>
+                                <a href={successData.bookingLink} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline break-all text-sm">
+                                    {successData.bookingLink}
+                                </a>
+                            </div>
+                        )}
                     </div>
 
                     <p className="text-sm text-slate-500">

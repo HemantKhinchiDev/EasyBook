@@ -230,8 +230,13 @@ function doPost(e) {
 
         MailApp.sendEmail({ to: data.email, subject, htmlBody: htmlBody });
 
-        return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Data saved', folderUrl: folderUrl }))
-            .setMimeType(ContentService.MimeType.JSON);
+        return ContentService.createTextOutput(JSON.stringify({
+            status: 'success',
+            message: 'Data saved',
+            folderUrl: folderUrl,
+            qrLink: qrLink,
+            bookingLink: bookingLink
+        })).setMimeType(ContentService.MimeType.JSON);
 
     } catch (e) {
         return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() }))
