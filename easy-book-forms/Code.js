@@ -8,10 +8,10 @@ const CONFIG = {
     // Google Sheets IDs: open each spreadsheet and copy the long ID from its URL
     SHEETS: {
         // Note: Only the unique ID string is used here.
-        SHOPKEEPERS_ID: '1ONuD2j2bREoLs1cKet5i6MB6poa-idAKwyGSbI0O6Hg',
-        SHOPKEEPERS_TAB: 'Form Responses 1',
-        APPOINTMENTS_ID: '1qUMVW8eYF0EId42W7Z-cJ69jWyuZYeujOYG6RMXqmXc',
-        APPOINTMENTS_TAB: 'Form Responses 1',
+        SHOPKEEPERS_ID: '1aZ26GJtxYCCSrNkHlAXfPEN5E4IwBHqK6C9MioA121s',
+        SHOPKEEPERS_TAB: 'Shopkeeper',
+        APPOINTMENTS_ID: '1aZ26GJtxYCCSrNkHlAXfPEN5E4IwBHqK6C9MioA121s',
+        APPOINTMENTS_TAB: 'Appointments',
         REVIEWS_ID: '1iSO7i3z22AZy6-ao30p4Zd5JvBxBoGwPCY5Jw_5dIAw',
         REVIEWS_TAB: 'Form Responses 1',
         SETTINGS_ID: '1bKZVoKGUcUj0qQyqTAAR5il6C0jBOs7aKdceHx_vWBE',
@@ -35,25 +35,36 @@ const HEADERS = {
     // Shopkeepers form
     SK: {
         TIMESTAMP: 'Timestamp',
-        OWNER: 'Owner name',
-        SHOP: 'Shop name',
-        EMAIL: 'Gmail',
-        PHONE: 'Mobile number',
+        OWNER: 'Owner Name',
+        SHOP: 'Shop Name',
+        EMAIL: 'Gmail (shop)',
+        PHONE: 'Mobile',
         ADDRESS: 'Address',
-        MAP: 'Map link', // "Google Map Link" in screenshot, mapped here
-        DETAILS: 'Business details',
-        // HOURS: 'Shop timing', // Replaced/Mapped to Min Charge based on screenshot observation
-        MIN_CHARGE: 'Minimun services Charge', // Added from screenshot
+        MAP: 'Google Map Link',
+        DETAILS: 'Business Details',
+        HOURS: 'Shop Timing',
         UPI: 'UPI ID',
-        TELEGRAM: 'Telegram Username', // Added from screenshot
-
-        // extra columns we add
-        ID: 'Shopkeeper ID',
+        TELEGRAM: 'Telegram Username',
         VERIFIED: 'Verified',
+        FOLDER_URL: 'Google drive link',
+        QR_LINK: 'QR',
+        ID: 'Shop ID',
+
+        // New Time Slot Columns (P-X)
+        SLOT1_START: 'Shop Time Start-1',
+        SLOT1_END: 'Shop Time End-1',
+        SLOT2_START: 'Shop Time Start-2',
+        SLOT2_END: 'Shop Time End-2',
+        SLOT3_START: 'Shop Time Start-3',
+        SLOT3_END: 'Shop Time End-3',
+        SLOT4_START: 'Shop Time Start-4',
+        SLOT4_END: 'Shop Time End-4',
+        BREAK_TIME: 'Break-Time',
+
+        // Extra columns (appended if not present)
+        MIN_CHARGE: 'Minimun services Charge',
         BOOKING_LINK: 'Booking Link',
-        QR_LINK: 'QR Link',
-        ONBOARDED_AT: 'Onboarded At',
-        FOLDER_URL: 'Folder URL' // Added for folder creation feature
+        ONBOARDED_AT: 'Onboarded At'
     },
 
     // Appointments form
@@ -86,106 +97,6 @@ const HEADERS = {
         USER: 'Reviewer Gmail'
     }
 };
-
-/**** NEW: Handle POST requests from React App ****/
-function doPost(e) {
-    const lock = LockService.getScriptLock();
-    lock.tryLock(10000);
-
-    try {
-        // 1. Parse Data
-        const data = JSON.parse(e.postData.contents);
-
-        // 2. Get Sheet
-        const sheet = getSheet(CONFIG.SHEETS.SHOPKEEPERS_ID, CONFIG.SHEETS.SHOPKEEPERS_TAB);
-        if (!sheet) throw new Error("Shopkeepers sheet not found");
-
-        // 3. Ensure Headers
-        // We use the HEADERS.SK definition to ensure columns exist
-        const neededHeaders = Object.values(HEADERS.SK);
-        ensureColumns(sheet, neededHeaders);
-
-        const headers = headerMap(sheet);
-
-        // 4. Create Folder
-        const parentFolder = getOrCreateFolder('EasyBook Shops');
-        const shopFolder = parentFolder.createFolder(`${data.shopName} - ${data.phone}`);
-        const folderUrl = shopFolder.getUrl();
-
-        // 5. Prepare Data Row
-        const row = sheet.getLastRow() + 1;
-
-        // Format Business Details (Slots + Break)
-        const timeSlotsString = data.timeSlots.map(slot => `${slot.start}-${slot.end}`).join(', ');
-        const businessDetails = `Slots: ${timeSlotsString} | Break: ${data.breakDuration} mins`;
-
-        // Set Values
-        setValue(sheet, row, headers, HEADERS.SK.TIMESTAMP, new Date());
-        setValue(sheet, row, headers, HEADERS.SK.OWNER, data.ownerName);
-        setValue(sheet, row, headers, HEADERS.SK.SHOP, data.shopName);
-        setValue(sheet, row, headers, HEADERS.SK.EMAIL, data.email);
-        setValue(sheet, row, headers, HEADERS.SK.PHONE, data.phone);
-        setValue(sheet, row, headers, HEADERS.SK.ADDRESS, data.address);
-        setValue(sheet, row, headers, HEADERS.SK.MAP, data.mapLink);
-        setValue(sheet, row, headers, HEADERS.SK.DETAILS, businessDetails);
-        setValue(sheet, row, headers, HEADERS.SK.MIN_CHARGE, data.minCharge);
-        setValue(sheet, row, headers, HEADERS.SK.UPI, data.upiId);
-        setValue(sheet, row, headers, HEADERS.SK.TELEGRAM, data.telegram);
-        setValue(sheet, row, headers, HEADERS.SK.FOLDER_URL, folderUrl);
-
-        // Trigger the existing onboarding logic (ID generation, QR code, Email)
-        // We can manually call the logic or let the trigger handle it if we were submitting to a Form.
-        // Since we are writing directly to the sheet, the onFormSubmit trigger WON'T fire automatically.
-        // We must call the logic manually.
-
-        // Generate ID
-        const shopId = 'SHP-' + Utilities.getUuid().slice(0, 8).toUpperCase();
-        setValue(sheet, row, headers, HEADERS.SK.ID, shopId);
-        setValue(sheet, row, headers, HEADERS.SK.VERIFIED, 'FALSE');
-
-        // Generate Links
-        const bookingLink = CONFIG.BOOKING_FORM_PREFILLED_TEMPLATE.replace('SHOPKEEPER_ID', encodeURIComponent(shopId));
-        setValue(sheet, row, headers, HEADERS.SK.BOOKING_LINK, bookingLink);
-
-        const qrLink = 'https://quickchart.io/qr?size=300&format=png&text=' + encodeURIComponent(bookingLink);
-        setValue(sheet, row, headers, HEADERS.SK.QR_LINK, qrLink);
-        setValue(sheet, row, headers, HEADERS.SK.ONBOARDED_AT, new Date());
-
-        // Send Email
-        const subject = `Your booking QR and link for ${data.shopName}`;
-        const body = [
-            `Hi,`,
-            ``,
-            `Share this link and QR with customers to take appointments:`,
-            `Booking link: ${bookingLink}`,
-            `QR image: ${qrLink}`,
-            ``,
-            `Note: Approvals will start working after Admin verifies your shop.`,
-            ``,
-            `Thanks!`
-        ].join('\n');
-
-        MailApp.sendEmail({ to: data.email, subject, htmlBody: body.replace(/\n/g, '<br>') });
-
-        return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Data saved', folderUrl: folderUrl }))
-            .setMimeType(ContentService.MimeType.JSON);
-
-    } catch (e) {
-        return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() }))
-            .setMimeType(ContentService.MimeType.JSON);
-    } finally {
-        lock.releaseLock();
-    }
-}
-
-function getOrCreateFolder(folderName) {
-    const folders = DriveApp.getFoldersByName(folderName);
-    if (folders.hasNext()) {
-        return folders.next();
-    } else {
-        return DriveApp.createFolder(folderName);
-    }
-}
 
 /**** INSTALL/TRIGGERS ****/
 function installAllTriggers() {
@@ -221,6 +132,115 @@ function ensureAllColumns() {
     ensureColumns(appt, [HEADERS.APPT.ID, HEADERS.APPT.STATUS, HEADERS.APPT.PAID, HEADERS.APPT.APPROVAL_TOKEN, HEADERS.APPT.APPROVED_AT, HEADERS.APPT.CAL_EVENT_ID, HEADERS.APPT.LAST_ERROR]);
 }
 
+/**** WEB APP HANDLER FOR REACT FORM ****/
+function doPost(e) {
+    const lock = LockService.getScriptLock();
+    lock.tryLock(10000);
+
+    try {
+        // 1. Parse Data
+        const data = JSON.parse(e.postData.contents);
+
+        // 2. Get Sheet
+        const sheet = getSheet(CONFIG.SHEETS.SHOPKEEPERS_ID, CONFIG.SHEETS.SHOPKEEPERS_TAB);
+        if (!sheet) throw new Error("Shopkeepers sheet not found");
+
+        // 3. Ensure Headers
+        const neededHeaders = Object.values(HEADERS.SK);
+        ensureColumns(sheet, neededHeaders);
+
+        const headers = headerMap(sheet);
+
+        // 4. Create Folder
+        const parentFolder = getOrCreateFolder('EasyBook Shops');
+        const shopFolder = parentFolder.createFolder(`${data.shopName} - ${data.phone}`);
+        const folderUrl = shopFolder.getUrl();
+
+        // 5. Prepare Data Row
+        const row = sheet.getLastRow() + 1;
+
+        // Format Business Details & Timing
+        const timeSlotsString = data.timeSlots.map(slot => `${slot.start}-${slot.end}`).join(', ');
+        const businessDetails = `Slots: ${timeSlotsString} | Break: ${data.breakDuration} mins | Min Charge: ${data.minCharge}`;
+
+        // Set Basic Values
+        setValue(sheet, row, headers, HEADERS.SK.TIMESTAMP, new Date());
+        setValue(sheet, row, headers, HEADERS.SK.OWNER, data.ownerName);
+        setValue(sheet, row, headers, HEADERS.SK.SHOP, data.shopName);
+        setValue(sheet, row, headers, HEADERS.SK.EMAIL, data.email);
+        setValue(sheet, row, headers, HEADERS.SK.PHONE, data.phone);
+        setValue(sheet, row, headers, HEADERS.SK.ADDRESS, data.address);
+        setValue(sheet, row, headers, HEADERS.SK.MAP, data.mapLink);
+        setValue(sheet, row, headers, HEADERS.SK.DETAILS, businessDetails); // Or just leave empty if user wants specific columns only
+        setValue(sheet, row, headers, HEADERS.SK.HOURS, timeSlotsString);
+        setValue(sheet, row, headers, HEADERS.SK.MIN_CHARGE, data.minCharge);
+        setValue(sheet, row, headers, HEADERS.SK.UPI, data.upiId);
+        setValue(sheet, row, headers, HEADERS.SK.TELEGRAM, data.telegram);
+        setValue(sheet, row, headers, HEADERS.SK.FOLDER_URL, folderUrl);
+
+        // Set Time Slots (P-W)
+        if (data.timeSlots && Array.isArray(data.timeSlots)) {
+            if (data.timeSlots[0]) {
+                setValue(sheet, row, headers, HEADERS.SK.SLOT1_START, data.timeSlots[0].start);
+                setValue(sheet, row, headers, HEADERS.SK.SLOT1_END, data.timeSlots[0].end);
+            }
+            if (data.timeSlots[1]) {
+                setValue(sheet, row, headers, HEADERS.SK.SLOT2_START, data.timeSlots[1].start);
+                setValue(sheet, row, headers, HEADERS.SK.SLOT2_END, data.timeSlots[1].end);
+            }
+            if (data.timeSlots[2]) {
+                setValue(sheet, row, headers, HEADERS.SK.SLOT3_START, data.timeSlots[2].start);
+                setValue(sheet, row, headers, HEADERS.SK.SLOT3_END, data.timeSlots[2].end);
+            }
+            if (data.timeSlots[3]) {
+                setValue(sheet, row, headers, HEADERS.SK.SLOT4_START, data.timeSlots[3].start);
+                setValue(sheet, row, headers, HEADERS.SK.SLOT4_END, data.timeSlots[3].end);
+            }
+        }
+
+        // Set Break Time (X)
+        setValue(sheet, row, headers, HEADERS.SK.BREAK_TIME, data.breakDuration);
+
+        // Generate ID and Links (Manual Onboarding)
+        const shopId = 'SHP-' + Utilities.getUuid().slice(0, 8).toUpperCase();
+        setValue(sheet, row, headers, HEADERS.SK.ID, shopId);
+        setValue(sheet, row, headers, HEADERS.SK.VERIFIED, 'FALSE');
+
+        const bookingLink = CONFIG.BOOKING_FORM_PREFILLED_TEMPLATE.replace('SHOPKEEPER_ID', encodeURIComponent(shopId));
+        setValue(sheet, row, headers, HEADERS.SK.BOOKING_LINK, bookingLink);
+
+        const qrLink = 'https://quickchart.io/qr?size=300&format=png&text=' + encodeURIComponent(bookingLink);
+        // Use setFormula to ensure it renders as an image
+        const qrCol = headers[HEADERS.SK.QR_LINK];
+        if (qrCol) sheet.getRange(row, qrCol).setFormula(`=IMAGE("${qrLink}", 1)`);
+
+        setValue(sheet, row, headers, HEADERS.SK.ONBOARDED_AT, new Date());
+
+        // Send Email
+        const subject = `Your booking QR and link for ${data.shopName}`;
+        const htmlBody = `
+            <p>Hi,</p>
+            <p>Share this link and QR with customers to take appointments:</p>
+            <p><strong>Booking link:</strong> <a href="${bookingLink}">${bookingLink}</a></p>
+            <p><strong>QR Code:</strong></p>
+            <img src="${qrLink}" alt="QR Code" width="300" height="300" />
+            <p>Note: Approvals will start working after Admin verifies your shop.</p>
+            <p>Thanks!</p>
+        `;
+
+        MailApp.sendEmail({ to: data.email, subject, htmlBody: htmlBody });
+
+        return ContentService.createTextOutput(JSON.stringify({ status: 'success', message: 'Data saved', folderUrl: folderUrl }))
+            .setMimeType(ContentService.MimeType.JSON);
+
+    } catch (e) {
+        return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: e.toString() }))
+            .setMimeType(ContentService.MimeType.JSON);
+    } finally {
+        lock.releaseLock();
+    }
+}
+
 /**** SHOPKEEPER REGISTRATION: create ID, booking link, QR, email ****/
 function onShopkeeperFormSubmit(e) {
     const sheet = e.range.getSheet();
@@ -230,9 +250,6 @@ function onShopkeeperFormSubmit(e) {
     const headers = headerMap(sheet);
     const email = getValue(sheet, row, headers, HEADERS.SK.EMAIL);
     const shop = getValue(sheet, row, headers, HEADERS.SK.SHOP);
-
-    // Check if ID already exists (to prevent double processing)
-    if (getValue(sheet, row, headers, HEADERS.SK.ID)) return;
 
     const shopId = 'SHP-' + Utilities.getUuid().slice(0, 8).toUpperCase();
     setValue(sheet, row, headers, HEADERS.SK.ID, shopId);
@@ -244,23 +261,23 @@ function onShopkeeperFormSubmit(e) {
     // *** UPDATED: Using QuickChart.io QR API as Google Chart is deprecated ***
     // Parameters: size=300, format=png, text=<URL>
     const qrLink = 'https://quickchart.io/qr?size=300&format=png&text=' + encodeURIComponent(bookingLink);
-    setValue(sheet, row, headers, HEADERS.SK.QR_LINK, qrLink);
+    const qrCol = headers[HEADERS.SK.QR_LINK];
+    if (qrCol) sheet.getRange(row, qrCol).setFormula(`=IMAGE("${qrLink}", 1)`);
+
     setValue(sheet, row, headers, HEADERS.SK.ONBOARDED_AT, new Date());
 
     const subject = `Your booking QR and link for ${shop}`;
-    const body = [
-        `Hi,`,
-        ``,
-        `Share this link and QR with customers to take appointments:`,
-        `Booking link: ${bookingLink}`,
-        `QR image: ${qrLink}`,
-        ``,
-        `Note: Approvals will start working after Admin verifies your shop.`,
-        ``,
-        `Thanks!`
-    ].join('\n');
+    const htmlBody = `
+        <p>Hi,</p>
+        <p>Share this link and QR with customers to take appointments:</p>
+        <p><strong>Booking link:</strong> <a href="${bookingLink}">${bookingLink}</a></p>
+        <p><strong>QR Code:</strong></p>
+        <img src="${qrLink}" alt="QR Code" width="300" height="300" />
+        <p>Note: Approvals will start working after Admin verifies your shop.</p>
+        <p>Thanks!</p>
+    `;
 
-    MailApp.sendEmail({ to: email, subject, htmlBody: body.replace(/\n/g, '<br>') });
+    MailApp.sendEmail({ to: email, subject, htmlBody: htmlBody });
 }
 
 /**** APPOINTMENT SUBMISSION: enforce free limit, send approve/reject to shopkeeper ****/
@@ -627,7 +644,9 @@ function onboardAllVerifiedShopkeepers() {
             setValue(sheet, row, headers, HEADERS.SK.BOOKING_LINK, link);
             // *** UPDATED: Using QuickChart.io QR API ***
             const qr = 'https://quickchart.io/qr?size=300&format=png&text=' + encodeURIComponent(link);
-            setValue(sheet, row, headers, HEADERS.SK.QR_LINK, qr);
+            const qrCol = headers[HEADERS.SK.QR_LINK];
+            if (qrCol) sheet.getRange(row, qrCol).setFormula(`=IMAGE("${qr}", 1)`);
+
             setValue(sheet, row, headers, HEADERS.SK.ONBOARDED_AT, new Date());
         }
     }
@@ -657,4 +676,13 @@ function getSettings() {
         }
     } catch (e) { }
     return out;
+}
+
+function getOrCreateFolder(folderName) {
+    const folders = DriveApp.getFoldersByName(folderName);
+    if (folders.hasNext()) {
+        return folders.next();
+    } else {
+        return DriveApp.createFolder(folderName);
+    }
 }

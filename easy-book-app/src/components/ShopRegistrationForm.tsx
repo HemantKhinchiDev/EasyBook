@@ -42,6 +42,8 @@ type ShopFormValues = z.infer<typeof shopFormSchema>;
 
 // --- Components ---
 export default function ShopRegistrationForm() {
+    const [isSuccess, setIsSuccess] = React.useState(false);
+
     const {
         register,
         control,
@@ -65,7 +67,7 @@ export default function ShopRegistrationForm() {
     });
 
     // TODO: Replace with your actual Google Apps Script Web App URL after deployment
-    const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XBKGFEEF6x1gtNltHOX4RfzLt-SlhFYRvUrt6Fe62TqURBsUESZuFVUq5CUa2BCoAQ/exec";
 
     const onSubmit = async (data: ShopFormValues) => {
         console.log("Submitting:", data);
@@ -82,7 +84,8 @@ export default function ShopRegistrationForm() {
             if (response.ok) {
                 const result = await response.json();
                 console.log("Success:", result);
-                alert("Form submitted successfully! Data saved to Google Sheet.");
+                setIsSuccess(true);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 throw new Error("Network response was not ok");
             }
@@ -92,6 +95,46 @@ export default function ShopRegistrationForm() {
         }
     };
 
+    if (isSuccess) {
+        return (
+            <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+                <div className="max-w-xl w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 p-8 text-center space-y-6">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                        <Store className="w-10 h-10 text-green-600" />
+                    </div>
+
+                    <h1 className="text-3xl font-bold text-slate-900">Registration Successful!</h1>
+
+                    <div className="space-y-4 text-left bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <h3 className="font-semibold text-lg text-slate-800">Next Steps:</h3>
+                        <ol className="list-decimal list-inside space-y-3 text-slate-600">
+                            <li className="pl-2">
+                                <span className="font-medium text-slate-900">Check your Email:</span> We have sent you a confirmation email with your unique QR Code.
+                            </li>
+                            <li className="pl-2">
+                                <span className="font-medium text-slate-900">Download QR Code:</span> Save the QR code image from the email to your phone/computer.
+                            </li>
+                            <li className="pl-2">
+                                <span className="font-medium text-slate-900">Upload to Google Maps:</span> Go to your shop's Google Maps listing and upload this QR code as a photo so customers can scan it to book appointments.
+                            </li>
+                        </ol>
+                    </div>
+
+                    <p className="text-sm text-slate-500">
+                        Once your shop is verified by the admin, your booking link will become active.
+                    </p>
+
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="mt-4 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+                    >
+                        Register Another Shop
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
@@ -100,9 +143,9 @@ export default function ShopRegistrationForm() {
                 <div className="bg-indigo-600 px-8 py-6 text-white">
                     <div className="flex items-center gap-3 mb-2">
                         <Store className="w-8 h-8" />
-                        <h1 className="text-2xl font-bold">Register Your Shop</h1>
+                        <h1 className="text-2xl font-bold">Get My Shop QR Code</h1>
                     </div>
-                    <p className="text-indigo-100">Set up your profile and booking slots.</p>
+                    <p className="text-indigo-100">Get Free QR and set up your profile.</p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-8">
@@ -351,7 +394,7 @@ export default function ShopRegistrationForm() {
                                 <span className="animate-pulse">Saving...</span>
                             ) : (
                                 <>
-                                    <Save className="w-5 h-5" /> Register Shop
+                                    <Save className="w-5 h-5" /> Register Shop Now
                                 </>
                             )}
                         </button>
