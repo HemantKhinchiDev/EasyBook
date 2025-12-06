@@ -110,39 +110,53 @@ export default function ShopRegistrationForm() {
 
                     <h1 className="text-3xl font-bold text-slate-900">Registration Successful!</h1>
 
-                    {successData.qrLink && (
-                        <div className="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-xl border border-slate-200">
-                            <img src={successData.qrLink} alt="Shop QR Code" className="w-48 h-48 mb-2" />
-                            <p className="text-sm text-slate-500 font-medium">Scan to Book Appointment</p>
-                        </div>
-                    )}
+                    <p className="text-lg text-slate-600">
+                        Thank you for registering your shop with EasyBook!
+                    </p>
 
                     <div className="space-y-4 text-left bg-slate-50 p-6 rounded-xl border border-slate-200">
-                        <h3 className="font-semibold text-lg text-slate-800">Next Steps:</h3>
-                        <ol className="list-decimal list-inside space-y-3 text-slate-600">
-                            <li className="pl-2">
-                                <span className="font-medium text-slate-900">Check your Email:</span> We have sent you a confirmation email with your unique QR Code.
-                            </li>
-                            <li className="pl-2">
-                                <span className="font-medium text-slate-900">Download QR Code:</span> Save the QR code image from the email to your phone/computer.
-                            </li>
-                            <li className="pl-2">
-                                <span className="font-medium text-slate-900">Upload to Google Maps:</span> Go to your shop's Google Maps listing and upload this QR code as a photo so customers can scan it to book appointments.
-                            </li>
-                        </ol>
-                        {successData.bookingLink && (
-                            <div className="mt-4 pt-4 border-t border-slate-200">
-                                <p className="text-sm text-slate-500 mb-1">Your Booking Link:</p>
-                                <a href={successData.bookingLink} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline break-all text-sm">
-                                    {successData.bookingLink}
-                                </a>
+                        <h3 className="font-semibold text-lg text-slate-800">What's Next?</h3>
+                        <div className="space-y-3 text-slate-600">
+                            <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span className="text-indigo-600 font-bold text-sm">1</span>
+                                </div>
+                                <div>
+                                    <p className="font-medium text-slate-900">Check Your Email</p>
+                                    <p className="text-sm text-slate-500">We've sent a confirmation email to your registered email address.</p>
+                                </div>
                             </div>
-                        )}
+
+                            <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span className="text-orange-600 font-bold text-sm">2</span>
+                                </div>
+                                <div>
+                                    <p className="font-medium text-slate-900">Wait for Verification</p>
+                                    <p className="text-sm text-slate-500">Our team will review your registration within 24-48 hours.</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span className="text-green-600 font-bold text-sm">3</span>
+                                </div>
+                                <div>
+                                    <p className="font-medium text-slate-900">Receive Your QR Code</p>
+                                    <p className="text-sm text-slate-500">Once verified, you'll receive another email with your Shop ID, booking link, and QR code.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <p className="text-sm text-slate-500">
-                        Once your shop is verified by the admin, your booking link will active.
-                    </p>
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <p className="text-sm text-blue-800">
+                            <span className="font-semibold">Status:</span> Pending Verification
+                        </p>
+                        <p className="text-xs text-blue-600 mt-1">
+                            You will be notified via email once your shop is verified.
+                        </p>
+                    </div>
 
                     <button
                         onClick={() => window.location.reload()}
